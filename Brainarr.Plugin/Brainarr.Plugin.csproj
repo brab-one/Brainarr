@@ -101,8 +101,17 @@
          without Docker extraction. Plugin types cross the host boundary via NzbDroneValidationResult,
          so we must compile against the same major version the host ships. -->
     <PackageReference Include="FluentValidation" Condition="!Exists('$(LidarrPath)\FluentValidation.dll')" PrivateAssets="all" />
-    <!-- System packages needed for compilation but provided by Lidarr runtime -->
+    <!-- ProtectedData (DPAPI, used by Common's Windows token protector). Lidarr <= 3.1.5 shipped it
+         transitively via System.Configuration.ConfigurationManager; 3.1.6 dropped that package
+         (Lidarr da7b4dfb1 "Remove unused package references"), so the host no longer provides it.
+         Merge it into the plugin DLL instead of relying on the host (see PluginPackagingAdditionalMerge below). -->
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+  </ItemGroup>
+
+  <!-- Bundle assemblies the host no longer ships: merged + internalized by Common's RepackPlugin target.
+       Safe to internalize: ProtectedData types never cross the host/plugin boundary. -->
+  <ItemGroup>
+    <PluginPackagingAdditionalMerge Include="$(TargetDir)System.Security.Cryptography.ProtectedData.dll" />
   </ItemGroup>
 
   <!-- Embed JSON schema used for structured outputs so providers don't rely on filesystem paths -->

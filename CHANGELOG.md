@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Fixed
+
+- Lidarr 3.1.6 compatibility: merge `System.Security.Cryptography.ProtectedData` into the plugin DLL. Lidarr 3.1.6 stopped shipping it (Lidarr da7b4dfb1 removed `System.Configuration.ConfigurationManager`, which pulled it in), so the DPAPI token protector on Windows failed to load and token protection degraded or failed.
+
 ### Changed
 
 - Pin `ext/Lidarr.Plugin.Common` and `ext-common-sha.txt` to Common `48e0b39c45f9edfe2a3cf38c9c298ce2c61ad5ca` to adopt Common strict-JSON Retry-After body-hint resolver and bounded full-body display (Common PR #142, 48e0b39c); plugin source remains unchanged.
